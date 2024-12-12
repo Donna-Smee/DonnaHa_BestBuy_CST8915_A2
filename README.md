@@ -2,6 +2,7 @@
 Donna Ha - 041174159
 
 ## Updated Application Architecture
+![application architecture diagram](Pictures/A2_FullStackAPP2.drawio.png)
 
 ## Application and Architecture Explanation
 
