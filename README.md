@@ -189,6 +189,11 @@ I also went on Azure Service Bus explorer to check metrics and peak at the messa
 
 ## Deployment Files
 All Kubernetes deployment YAML files are in the **Deployment Files** folder in this repository. 
+- admin-tasks.yaml: This is not used but can be useful if we decide to add virtual-worker and virtual-customer for testing later on.
+- aps-all-in-one.yaml: This is the deployment file for all the microservices needed for this project/application. It is in one file for easy use as it only needs one command to deploy everything.
+- config-maps: This contains configuration information used by RabbitMQ
+- secrets-servicebus.yaml: This was the secrets file I made for the service bus, it is not used right now as service bus does not work, and I reverted back to RabbitMQ
+- secrets.yaml: This contains the secret endpoint (encoded) for the open AI api
 
 ## Demo Video
 [Demo Video Youtube Link](https://youtu.be/ud1mwPlqJXA)
