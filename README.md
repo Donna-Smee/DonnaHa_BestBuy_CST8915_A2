@@ -6,6 +6,35 @@ Note: Azure Service Bus was created and connected but the attempt but not succes
 ![application architecture diagram](Pictures/A2_FullStackAPP2.drawio.png)
 
 ## Application and Architecture Explanation
+### -Application-
+This application is for an online store, in this case it is specifically for Best Buy. This store sells high quality electronics and tech such as laptops, cameras, Playstations, etc. Users can access the online store through an interface (store-front), look at products (which include the title, description, price and image), add them to the cart and checkout. When the user checkouts, the order will be sent and the user will be notified if the order was sent successfully or not.
+
+This application also includes services for the store administrators (store-admin), where employees can access an admin portal and view all the orders that customers have placed. They can view each order to see the products that were ordered, and the prices and total cost. Employees can also process the orders, and once they do, the orders should be removed from the queue (they will no longer see it in the admin portal orders). Employees also have the ability to view each product (title, description, price, image) and they are able to edit the information and save it if necessary. They can also create a product with the help of GPT-4 and DALL-E, which is a language model and an image generation model, respectively. By using these AI models, employees can give a title, price, key tag words for a product, and use AI to generate a description and an image for the product. Once saved, the new product shoulda appear in the product list both on the admin portal as well as the store front. 
+
+### -Architecture-
+This architecture includes several parts/microservices that work together to function properly.
+
+- store-front: this is the web interface that customers see and use to view and order products. It is a microservice that is made by Vue.js. The store-front speaks to two services, the order-service, and the product-service. The order-service is used to send the orders to the order queue. The store-front gets its products from product-service.
+
+- store-admin: this is the web interface that employees see and use to view and process orders, view and edit products, and create products (with the help of AI). The store admin talks to the makeline-service to get information from the order queue, once the orders are processed, makeline-store sends it to the order database (mongoDB). It also interacts with the product-service and ai-service.
+
+- order-service: this is a microservice (node.js) that handles the ordering of products. When users sends an order, the order-service handles it by receiving it, and sending it to the order queue (rabbitMQ, or Azure service bus)
+
+- product-service: this is a microservice (Rust) that currently stores a list of static products, and handles products related services (store-front uses it to get the products). (handles CRUD operations for product management)
+
+- makeline-service: this is a microservice (GO) that gets the order from the order queue so that store-admin can see them, and when the store-admin processes and order, it ensure the order is removed from order queue. It also sends processed orders to the order database (mongoDB)
+
+- ai-service: this is a microservice (python) that utilizes AI models (as a backing service) and handles ai services so the store-admin can use it to request things like description and image generation
+
+
+#### Backing services
+
+- Azure Service Bus/RabbitMQ: this is a backing service. This project wants to switch from RabbitMQ (owned backing service) to Azure Service Bus (managed backing service). It separates the tasks of placing an order (order-service) from processing the order (makeline-service).
+
+- MongoDB: this backing service stores all persistent data related to completed orders
+
+- OpenAI Models: AI models for generating product descriptions (GPT-4) and product images (DALL·E)
+
 
 ## Deployment Instructions (Azure)
 Prerequisite: Install kubectl, az login (to use azure)
