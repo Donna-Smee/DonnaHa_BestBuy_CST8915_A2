@@ -123,7 +123,40 @@ How to deploy the application in a Kubernetes cluster:
 
 
 ## Any issues or limitations in the implementation
+I did run into a lot of issues that I have learned from in this project. Here are just a few major ones:
 
+### Issue 1: ai-service repository did not work 
+**Problem**: The ai-service Docker image from the Professor worked, however, when I forked and cloned the ai-service-l8 repository, and built a Docker Image, it did not work
+
+**Troubleshooting attempts**: First, I switched back to Professor Ramy’s image to confirm that it is my ai-service image that doesn’t work and not something else. Then, I thought that maybe there was something wrong with the python environment so I tried to create environments before building an image. However that did not work, but I did learn more about how the Dockerfile worked. I tried multiple more attempts, and then finally I asked a friend in class if their ai-service worked without any changes and they directed me to the requirements.txt file. I then used ChatGPT to ask them what would be wrong with the requirement.txt file, and it gave me an updated requirements.txt file, so that everything had a version. 
+
+**Result**: After updating the requirements.txt file and creating an image, I tested it in Kubernetes and it worked!
+
+### Issue 2: OpenAI on Azure - EastUS not available
+**Problem**: I was not able to find both GPT-4 and DALL-E-3 both in East-US (or in US or Canada for that matter). Sometimes GPT-4 would be available in East-US or East-US 2, but DALL-E-3 was only available in Sweden. At first I was using my normal student Azure subscription, then I switched to the other subscription and found DALL-E-3 in East-US. However, that was to test ai-service from the issue #1. After I tried to find it again, it says no quota for everything but Sweden Central, and eventually GPT-4 also did not offer East-US.
+
+**Troubleshooting attempts**: I tried to research quotas and how to get more/increase my quota. I also used ChatGPT to try to possibly change the .yaml file (all-in-one and secrets) so that it can use two different endpoints, however it was complicated and I was breaking the code. 
+So finally I decided to try to make it both the same region, just not in East-US, whatever is available. 
+I tried to create OpenAI in different regions to see if that would change anything. (it did, but not by much). I understood more about quotas as I tried to create and delete models. Finally, I saw GPT-4 was available in East-US again, and I checked Dall-e-2 instead, and it was also available in East-US, so I used Dall-e-2 instead.
+
+**Result**: Was able to deploy GPT-4 and Dall-e-2 both in East-US, and Dall-e-2 works well with the application. Dall-e-3 can always be easily subbed in/replaced when it is available. 
+
+### Issue 3: For the Bonus task, adding github secrets variables 
+**Problem**: The KUBE_CONFIG_DATA was always too large. When I was doing lab9, I asked ChatGPT for help and the compressed command it gave me worked. However, when doing this project, it was too large.
+
+**Troubleshooting attempts**: I tried different versions of compressing the Config Data, every time it was too large. I even tried to delete and make a new Kubernetes to see if that worked. I deleted the services, I tried creating the Kubernetes with fewer nodes. Nothing worked. So I went back to ChatGPT to ask why this config data was bigger than previously, and found out that I needed to check my context, clusters, and users using kube. So I did, I deleted contexts, and tried again. When that still didn’t work, I did the same for the clusters. And when that didn’t work, I deleted the users, and the config data file decreased dramatically!
+
+**Result**: I learned how important it is to delete unused resources! I was able to add the secrets to github repositories without any compressing.
+
+### Issue 4: Trying to replace RabbitMQ with Azure Service Bus
+**Problem**: I followed and completed the steps to create the Azure Service Bus, and since I was unable to use the managed Identity option, I had to use the shared policy (SAS) option. 
+Azure Service Bus was somehow not getting the orders correctly and I could not figure it out.
+
+**Troubleshooting attempts**: I modified the all-in-one YAML file, especially in order-service environment variables, and redeployed everything. The store-front was still able to send orders. I then deleted the RabbitMQ part and tried again, the store-front still sends the orders but the store-admin does not receive it. I then received console errors. I then realized I had to also fix the makeline-service environment variables in the all-in-one YAML file. I also made a secret.yaml file just for Azure Service Bus to store the password. (And later I tried the primary connection string (SAS) for the Service Bus so I included that in the secrets-servicebus.yaml as well). 
+I started looking at the order-service and makeline-service code to make some sense as to what is happening and what is the issue. I tried to add some print lines but was confused about where it was showing up. 
+I also went on Azure Service Bus explorer to check metrics and peak at the messages.
+
+**Result**: After a long time of poking around and making changes, I was still not able to make it work so I reverted it back to RabbitMQ so that the application still works. 
 
 ## Deployment Files
 All Kubernetes deployment YAML files are in the **Deployment Files** folder in this repository. 
