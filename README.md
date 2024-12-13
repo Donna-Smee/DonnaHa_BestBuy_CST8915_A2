@@ -1,5 +1,6 @@
 # Lab Project Assignment #2: Building a Cloud-Native App for Best Buy
-Donna Ha - 041174159
+Donna Ha - 041174159 </br></br>
+Note: Azure Service Bus was created and connected but the attempt but not successful, so I switched back to RabbitMQ for a working application. I did however complete the bonus task.
 
 ## Updated Application Architecture
 ![application architecture diagram](Pictures/A2_FullStackAPP2.drawio.png)
@@ -130,6 +131,11 @@ All Kubernetes deployment YAML files are in the **Deployment Files** folder in t
 ## Demo Video
 [Demo Video Youtube Link](https://youtu.be/ud1mwPlqJXA)
 (Should be unlisted)
+
+## ✅(COMPLETED) Bonus Task: Implement a CI/CD Pipeline for Each Microservice
+Check each of the repositories of the microservices for the .github/workflows/ci_cd.yaml file.
+Previous (successful) actions can be seen, and is shown in the demo video. 
+(Demo video also briefly shows the secret variables)
 
 
 
